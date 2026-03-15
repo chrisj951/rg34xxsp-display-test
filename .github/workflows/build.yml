@@ -1,0 +1,33 @@
+name: Build rg34xx_display_test
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-arm64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install ARM64 cross-compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu make
+
+      - name: Build rg34xx_display_test
+        run: |
+          aarch64-linux-gnu-gcc -O2 -o rg34xx_display_test rg34xx_display_test.c
+
+      - name: Verify build
+        run: |
+          file rg34xx_display_test
+
+      - name: Upload ARM64 binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: rg34xx_display_test
+          path: ./rg34xx_display_test
